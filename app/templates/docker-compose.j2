@@ -1,0 +1,92 @@
+version: "{{ version }}"
+services:
+{%- for name, service in services.items() %}
+  {{ name }}:
+    image: {{ service.image }}
+    {%- if service.container_name %}
+    container_name: {{ service.container_name }}
+    {%- endif %}
+    {%- if service.ports %}
+    ports:
+      {%- for port in service.ports %}
+      - "{{ port }}"
+      {%- endfor %}
+    {%- endif %}
+    {%- if service.volumes %}
+    volumes:
+      {%- for volume in service.volumes %}
+      - "{{ volume }}"
+      {%- endfor %}
+    {%- endif %}
+    {%- if service.environment %}
+    environment:
+      {%- for key, value in service.environment.items() %}
+      - "{{ key }}={{ value }}"
+      {%- endfor %}
+    {%- endif %}
+    {%- if service.restart %}
+    restart: {{ service.restart }}
+    {%- endif %}
+    {%- if service.networks %}
+    networks:
+      {%- for network in service.networks %}
+      - "{{ network }}"
+      {%- endfor %}
+    {%- endif %}
+    {%- if service.depends_on %}
+    depends_on:
+      {%- for dep in service.depends_on %}
+      - "{{ dep }}"
+      {%- endfor %}
+    {%- endif %}
+    {%- if service.healthcheck %}
+    healthcheck:
+      {%- for key, value in service.healthcheck.items() %}
+      {{ key }}: "{{ value }}"
+      {%- endfor %}
+    {%- endif %}
+    {%- if service.build %}
+    build:
+      context: {{ service.build.context }}
+      dockerfile: {{ service.build.dockerfile }}
+    {%- endif %}
+    {%- if service.runtime %}
+    runtime: {{ service.runtime }}
+    {%- endif %}
+    {%- if service.secrets %}
+    secrets:
+      {%- for secret in service.secrets %}
+      - "{{ secret }}"
+      {%- endfor %}
+    {%- endif %}
+{%- endfor %}
+
+{%- if networks %}
+networks:
+  {%- for name, config in networks.items() %}
+  {{ name }}:
+    {%- for key, value in config.items() %}
+    {{ key }}: {{ value }}
+    {%- endfor %}
+  {%- endfor %}
+{%- endif %}
+
+{%- if volumes %}
+volumes:
+  {%- for name, config in volumes.items() %}
+  {{ name }}:
+    {%- for key, value in config.items() %}
+    {{ key }}: {{ value }}
+    {%- endfor %}
+  {%- endfor %}
+{%- endif %}
+
+{%- if secrets %}
+secrets:
+  {%- for name, config in secrets.items() %}
+  {{ name }}:
+    {%- for key, value in config.items() %}
+    {{ key }}: {{ value }}
+    {%- endfor %}
+  {%- endfor %}
+{%- endif %}

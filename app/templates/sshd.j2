@@ -1,0 +1,58 @@
+# Основные параметры
+Port {{ port | default(22) }}
+Protocol {{ protocol | default(2) }}
+PermitRootLogin {{ permit_root_login | default('prohibit-password') }}
+MaxAuthTries {{ max_auth_tries | default(6) }}
+MaxSessions {{ max_sessions | default(10) }}
+
+{% if allow_users %}
+AllowUsers {{ allow_users | join(' ') }}
+{% endif %}
+
+{% if deny_users %}
+DenyUsers {{ deny_users | join(' ') }}
+{% endif %}
+
+{% if allow_groups %}
+AllowGroups {{ allow_groups | join(' ') }}
+{% endif %}
+
+{% if deny_groups %}
+DenyGroups {{ deny_groups | join(' ') }}
+{% endif %}
+
+{% if password_authentication is defined %}
+PasswordAuthentication {{ 'yes' if password_authentication else 'no' }}
+{% endif %}
+
+{% if permit_empty_passwords is defined %}
+PermitEmptyPasswords {{ 'yes' if permit_empty_passwords else 'no' }}
+{% endif %}
+
+{% if pubkey_authentication is defined %}
+PubkeyAuthentication {{ 'yes' if pubkey_authentication else 'no' }}
+{% endif %}
+
+{% if authorized_keys_file %}
+AuthorizedKeysFile {{ authorized_keys_file }}
+{% endif %}
+
+{% if client_alive_interval %}
+ClientAliveInterval {{ client_alive_interval }}
+{% endif %}
+
+{% if client_alive_count_max %}
+ClientAliveCountMax {{ client_alive_count_max }}
+{% endif %}
+
+{% if x11_forwarding is defined %}
+X11Forwarding {{ 'yes' if x11_forwarding else 'no' }}
+{% endif %}
+
+{% if banner %}
+Banner {{ banner }}
+{% endif %}
+
+{% if subsystem_sftp %}
+Subsystem sftp {{ subsystem_sftp }}
+{% endif %}

@@ -1,0 +1,38 @@
+# Redis Configuration
+{{ '# Redis server configuration' if include_comments else '' }}
+
+{{ 'bind ' ~ bind if bind else '' }}
+{{ 'port ' ~ port if port else '' }}
+{{ 'tcp-backlog ' ~ tcp_backlog if tcp_backlog else '' }}
+{{ 'timeout ' ~ timeout if timeout else '' }}
+
+# Logging
+{{ 'loglevel ' ~ loglevel if loglevel else '' }}
+{{ 'logfile ' ~ logfile if logfile else '' }}
+
+# Memory Management
+{{ 'maxmemory ' ~ maxmemory if maxmemory else '' }}
+{{ 'maxmemory-policy ' ~ maxmemory_policy if maxmemory_policy else '' }}
+{{ 'maxmemory-samples ' ~ maxmemory_samples if maxmemory_samples else '' }}
+
+# Persistence
+{{ 'save ""' if save == [] else '' }}
+{% for interval, changes in save %}
+save {{ interval }} {{ changes }}
+{% endfor %}
+
+{{ 'rdbcompression ' ~ ('yes' if rdbcompression else 'no') if rdbcompression is not none else '' }}
+{{ 'rdbchecksum ' ~ ('yes' if rdbchecksum else 'no') if rdbchecksum is not none else '' }}
+
+# Replication
+{{ 'slaveof ' ~ slaveof if slaveof else '' }}
+{{ 'masterauth ' ~ masterauth if masterauth else '' }}
+{{ 'replica-read-only ' ~ ('yes' if replica_read_only else 'no') if replica_read_only is not none else '' }}
+
+# Security
+{{ 'requirepass ' ~ requirepass if requirepass else '' }}
+
+# Custom settings
+{% for param, value in custom_settings.items() %}
+{{ param ~ ' ' ~ value }}
+{% endfor %}

@@ -1,0 +1,42 @@
+# PostgreSQL Configuration
+{{ '# This is the main PostgreSQL configuration file' if include_comments else '' }}
+
+{{ 'listen_addresses = ' ~ listen_addresses if listen_addresses else '' }}
+{{ 'port = ' ~ port if port else '' }}
+
+# Logging
+{{ 'logging_collector = ' ~ logging_collector | lower if logging_collector is not none else '' }}
+{{ 'log_directory = ' ~ log_directory if log_directory else '' }}
+{{ 'log_filename = ' ~ log_filename if log_filename else '' }}
+{{ 'log_statement = ' ~ log_statement if log_statement else '' }}
+
+# Connection Settings
+{{ 'max_connections = ' ~ max_connections if max_connections else '' }}
+{{ 'superuser_reserved_connections = ' ~ superuser_reserved_connections if superuser_reserved_connections else '' }}
+{{ 'unix_socket_directories = ' ~ unix_socket_directories if unix_socket_directories else '' }}
+
+# Memory Settings
+{{ 'shared_buffers = ' ~ shared_buffers if shared_buffers else '' }}
+{{ 'work_mem = ' ~ work_mem if work_mem else '' }}
+{{ 'maintenance_work_mem = ' ~ maintenance_work_mem if maintenance_work_mem else '' }}
+
+# Authentication
+{{ 'password_encryption = ' ~ password_encryption if password_encryption else '' }}
+{{ 'ssl = ' ~ ssl | lower if ssl is not none else '' }}
+{{ 'ssl_cert_file = ' ~ ssl_cert_file if ssl_cert_file else '' }}
+{{ 'ssl_key_file = ' ~ ssl_key_file if ssl_key_file else '' }}
+
+# Replication
+{{ 'wal_level = ' ~ wal_level if wal_level else '' }}
+{{ 'max_wal_senders = ' ~ max_wal_senders if max_wal_senders else '' }}
+{{ 'synchronous_commit = ' ~ synchronous_commit if synchronous_commit else '' }}
+
+# Autovacuum
+{{ 'autovacuum = ' ~ autovacuum | lower if autovacuum is not none else '' }}
+{{ 'autovacuum_vacuum_threshold = ' ~ autovacuum_vacuum_threshold if autovacuum_vacuum_threshold else '' }}
+{{ 'autovacuum_analyze_threshold = ' ~ autovacuum_analyze_threshold if autovacuum_analyze_threshold else '' }}
+
+# Custom settings
+{% for param, value in custom_settings.items() %}
+{{ param ~ ' = ' ~ value }}
+{% endfor %}

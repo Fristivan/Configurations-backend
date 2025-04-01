@@ -1,0 +1,77 @@
+<VirtualHost *:{{ port }}>
+    ServerAdmin {{ server_admin }}
+    ServerName {{ server_name }}
+    {% if server_alias %}
+    ServerAlias {{ server_alias }}
+    {% endif %}
+
+    DocumentRoot "{{ document_root }}"
+
+    {% if directory_options or allow_override or directory_index or directory_allow %}
+    <Directory "{{ document_root }}">
+        {% if directory_options %}
+        Options {{ directory_options }}
+        {% endif %}
+        {% if allow_override %}
+        AllowOverride {{ allow_override }}
+        {% endif %}
+        {% if directory_index %}
+        DirectoryIndex {{ directory_index }}
+        {% endif %}
+        {% if directory_allow %}
+        Require {{ directory_allow }}
+        {% endif %}
+    </Directory>
+    {% endif %}
+
+    {% if log_enabled %}
+    ErrorLog ${APACHE_LOG_DIR}/error.log
+    CustomLog ${APACHE_LOG_DIR}/access.log combined
+    {% endif %}
+
+    {% if ssl_enabled %}
+    SSLEngine on
+    SSLCertificateFile {{ ssl_certificate_file }}
+    SSLCertificateKeyFile {{ ssl_certificate_key_file }}
+    {% if ssl_chain_file %}
+    SSLCertificateChainFile {{ ssl_chain_file }}
+    {% endif %}
+    {% if ssl_protocols %}
+    SSLProtocol {{ ssl_protocols }}
+    {% endif %}
+    {% if ssl_ciphers %}
+    SSLCipherSuite {{ ssl_ciphers }}
+    {% endif %}
+    {% if ssl_session_cache %}
+    SSLSessionCache {{ ssl_session_cache }}
+    {% endif %}
+    {% endif %}
+
+    {% if proxy_pass %}
+    ProxyPass {{ proxy_path }} {{ proxy_pass }}
+    ProxyPassReverse {{ proxy_path }} {{ proxy_pass }}
+    {% endif %}
+
+    {% if compression_enabled %}
+    <IfModule mod_deflate.c>
+        AddOutputFilterByType DEFLATE text/html text/plain text/xml text/css text/javascript application/javascript application/json
+    </IfModule>
+    {% endif %}
+
+    {% if security_headers %}
+    Header set X-Frame-Options "SAMEORIGIN"
+    Header set X-XSS-Protection "1; mode=block"
+    Header set X-Content-Type-Options "nosniff"
+    {% endif %}
+
+    {% if rewrite_rules %}
+    <IfModule mod_rewrite.c>
+        RewriteEngine On
+        {{ rewrite_rules }}
+    </IfModule>
+    {% endif %}
+
+    {% if additional_config %}
+    {{ additional_config }}
+    {% endif %}
+</VirtualHost>

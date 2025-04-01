@@ -1,0 +1,38 @@
+[Unit]
+Description={{ description }}
+After={{ after }}
+
+[Service]
+ExecStart={{ exec_start }}
+{% if restart_policy %}
+Restart={{ restart_policy }}
+{% endif %}
+{% if user %}
+User={{ user }}
+{% endif %}
+{% if group %}
+Group={{ group }}
+{% endif %}
+{% if working_directory %}
+WorkingDirectory={{ working_directory }}
+{% endif %}
+{% if environment %}
+{% for key, value in environment.items() %}
+Environment="{{ key }}={{ value }}"
+{% endfor %}
+{% endif %}
+{% if timeout_start_sec %}
+TimeoutStartSec={{ timeout_start_sec }}
+{% endif %}
+{% if timeout_stop_sec %}
+TimeoutStopSec={{ timeout_stop_sec }}
+{% endif %}
+{% if restart_sec %}
+RestartSec={{ restart_sec }}
+{% endif %}
+{% if log_level %}
+LogLevel={{ log_level }}
+{% endif %}
+
+[Install]
+WantedBy={{ wanted_by }}

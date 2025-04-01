@@ -1,0 +1,51 @@
+{% if base_image -%}
+FROM {{ base_image }}
+{% endif -%}
+
+{% for key, value in labels.items() -%}
+LABEL {{ key }}="{{ value }}"
+{% endfor -%}
+
+{% if maintainer -%}
+MAINTAINER {{ maintainer }}
+{% endif -%}
+
+{% if workdir -%}
+WORKDIR {{ workdir }}
+{% endif -%}
+
+{% for file in copy_files -%}
+COPY {{ file.source }} {{ file.destination }}
+{% endfor -%}
+
+{% for cmd in run_commands -%}
+RUN {{ cmd }}
+{% endfor -%}
+
+{% if expose_ports -%}
+EXPOSE {{ expose_ports | join(' ') }}
+{% endif -%}
+
+{% for key, value in env_variables.items() -%}
+ENV {{ key }}={{ value }}
+{% endfor -%}
+
+{% if volumes -%}
+VOLUME {{ volumes | join(' ') }}
+{% endif -%}
+
+{% if user -%}
+USER {{ user }}
+{% endif -%}
+
+{% if healthcheck -%}
+HEALTHCHECK --interval={{ healthcheck.interval }} --timeout={{ healthcheck.timeout }} --retries={{ healthcheck.retries }} CMD {{ healthcheck.test | join(' ') }}
+{% endif -%}
+
+{% if entrypoint -%}
+ENTRYPOINT ["{{ entrypoint }}"]
+{% endif -%}
+
+{% if cmd -%}
+CMD [{% for c in cmd %}"{{ c }}"{% if not loop.last %}, {% endif %}{% endfor %}]
+{% endif -%}
