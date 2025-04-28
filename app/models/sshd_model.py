@@ -1,8 +1,7 @@
 from typing import Optional, List
-from pydantic import Field, BaseModel
+from pydantic import Field, BaseModel, validator
 
 
-# Models for SSHD
 class SSHConfig(BaseModel):
     port: Optional[int] = Field(
         22,
@@ -80,3 +79,28 @@ class SSHConfig(BaseModel):
         None,
         description="Путь к SFTP-субсистеме. Обычно: '/usr/lib/openssh/sftp-server'."
     )
+
+    # Добавляем валидаторы
+    @validator(
+        'allow_users',
+        'deny_users',
+        'allow_groups',
+        'deny_groups',
+        pre=True
+    )
+    def empty_string_to_list(cls, v):
+        """ Преобразуем пустые строки в None для списков """
+        if v == "":
+            return None
+        return v
+
+    @validator(
+        'client_alive_interval',
+        'client_alive_count_max',
+        pre=True
+    )
+    def empty_string_to_int(cls, v):
+        """ Преобразуем пустые строки в None для целых чисел """
+        if v == "":
+            return None
+        return v

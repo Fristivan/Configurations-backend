@@ -1,9 +1,32 @@
+# app/config.py
+
+from pydantic import EmailStr
+from pydantic_settings import BaseSettings
 from datetime import timedelta
 
-SECRET_KEY = "your_secret_key"  # Замени на более сложный ключ
-ALGORITHM = "HS256"
-ACCESS_TOKEN_EXPIRE_MINUTES = 60  # 1 час
-REFRESH_TOKEN_EXPIRE_DAYS = 30  # 30 дней
+class Settings(BaseSettings):
+    # JWT конфигурация
+    SECRET_KEY: str
+    ALGORITHM: str = "HS256"
+    ACCESS_TOKEN_EXPIRE_MINUTES: int = 60
+    REFRESH_TOKEN_EXPIRE_DAYS: int = 30
 
-ACCESS_TOKEN_EXPIRE = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
-REFRESH_TOKEN_EXPIRE = timedelta(days=REFRESH_TOKEN_EXPIRE_DAYS)
+    # SMTP конфигурация
+    SMTP_SERVER: str
+    SMTP_PORT: int
+    SMTP_USER: EmailStr
+    SMTP_PASSWORD: str
+
+    class Config:
+        env_file = ".env"
+        env_file_encoding = "utf-8"
+
+    @property
+    def access_token_expire(self) -> timedelta:
+        return timedelta(minutes=self.ACCESS_TOKEN_EXPIRE_MINUTES)
+
+    @property
+    def refresh_token_expire(self) -> timedelta:
+        return timedelta(days=self.REFRESH_TOKEN_EXPIRE_DAYS)
+
+settings = Settings()
