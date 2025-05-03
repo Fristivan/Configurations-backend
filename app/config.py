@@ -22,6 +22,9 @@ class Settings(BaseSettings):
     CONFIGURATION_SECRET_KEY: str
     BASE_URL: str
 
+    # База данных
+    SQLALCHEMY_DATABASE_URL: str
+
     class Config:
         env_file = ".env"
         env_file_encoding = "utf-8"
