@@ -16,6 +16,8 @@ def get_account_info(
     return {
         "id": user.id,
         "email": user.email,
+        "subscription_level": user.subscription_level,
+        "subscription_expiry": user.subscription_expiry,
         "requests_this_month": user.requests_this_month,
         "request_limit": user.request_limit,
         "limit_reset_date": user.limit_reset_date.isoformat(),

@@ -4,6 +4,7 @@ from fastapi import APIRouter, Depends, Request, HTTPException
 from sqlalchemy.orm import Session
 from pydantic import BaseModel
 from app.auth.auth_service import get_db, get_current_user
+from app.auth.password_reset import password_reset_router
 from app.yookassa.payment_service import PaymentProcessor
 from app.database.models import PaymentOrder, User  # твои ORM-модели
 from datetime import datetime, timedelta
@@ -81,11 +82,11 @@ async def yookassa_webhook(request: Request, db: Session = Depends(get_db)):
     # 2) если оплачено — активируем подписку
     if status == "succeeded":
         user = db.query(User).get(order.user_id)
+        user.request_limit = 30 if order.plan == 'premium' else 60
         user.subscription_level = order.plan
         user.subscription_expiry = datetime.utcnow() + timedelta(days=30)
         order.status = "succeeded"
         db.commit()
-
     return {"ok": True}
 
 @router.get("/", response_model=List[PaymentOrderResponse])
