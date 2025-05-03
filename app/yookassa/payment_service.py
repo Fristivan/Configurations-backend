@@ -1,11 +1,12 @@
 # payment_service.py
 from yookassa import Configuration, Payment
 import uuid
+from app.config import settings
 
 # Настройки YooKassa
-Configuration.account_id = '1081423'
-Configuration.secret_key = 'test_yldfZFuRO7hiZr5gaJaFHwl92Kq4OqXrKYdpw6iE0ag'
-base_url = 'http://localhost:3000/payment-return'
+Configuration.account_id = settings.CONFIGURATION_ACCOUNT_ID
+Configuration.secret_key = settings.CONFIGURATION_SECRET_KEY
+base_url = settings.BASE_URL
 
 
 class PaymentProcessor:

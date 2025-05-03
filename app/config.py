@@ -17,6 +17,11 @@ class Settings(BaseSettings):
     SMTP_USER: EmailStr
     SMTP_PASSWORD: str
 
+    # Yoomoney настройки
+    CONFIGURATION_ACCOUNT_ID: int
+    CONFIGURATION_SECRET_KEY: str
+    BASE_URL: str
+
     class Config:
         env_file = ".env"
         env_file_encoding = "utf-8"
