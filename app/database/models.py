@@ -1,5 +1,4 @@
 from datetime import datetime, timedelta
-
 from sqlalchemy import Column, Integer, String, Boolean, DateTime, ForeignKey, Text
 from sqlalchemy.orm import relationship
 
@@ -12,13 +11,17 @@ class User(Base):
     email = Column(String, unique=True, index=True, nullable=False)
     hashed_password = Column(String, nullable=False)
     is_active = Column(Boolean, default=True)
-    subscription_level = Column(String, default="free")
-    request_limit = Column(Integer, default=15)  # Бесплатные 15 запросов
-    requests_this_month = Column(Integer, default=0)  # Учёт использованных запросов
-    limit_reset_date = Column(DateTime, default=lambda: datetime.utcnow() + timedelta(days=30))
 
-    # Для связи с конфигурациями:
-    configurations = relationship("Configuration", back_populates="user")
+    # Подписка и лимиты
+    subscription_level = Column(String, default="free", nullable=False)
+    subscription_expiry = Column(DateTime, default=lambda: datetime.utcnow() + timedelta(days=30), nullable=False)
+    request_limit = Column(Integer, default=15, nullable=False)
+    requests_this_month = Column(Integer, default=0, nullable=False)
+    limit_reset_date = Column(DateTime, default=lambda: datetime.utcnow() + timedelta(days=30), nullable=False)
+
+    # Связи
+    configurations = relationship("Configuration", back_populates="user", cascade="all, delete-orphan")
+    payment_orders = relationship("PaymentOrder", back_populates="user", cascade="all, delete-orphan")
 
 
 class Configuration(Base):
@@ -26,11 +29,11 @@ class Configuration(Base):
 
     id = Column(Integer, primary_key=True, index=True)
     user_id = Column(Integer, ForeignKey("users.id"), nullable=False)
-    service = Column(String, nullable=False)  # Название или тип сервиса
-    config_name = Column(String, nullable=False)  # Имя конфигурации
-    config_data = Column(String, nullable=False)  # Данные конфигурации (например, JSON в виде строки)
-    created_at = Column(DateTime, default=datetime.utcnow)
-    updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+    service = Column(String, nullable=False)
+    config_name = Column(String, nullable=False)
+    config_data = Column(Text, nullable=False)
+    created_at = Column(DateTime, default=datetime.utcnow, nullable=False)
+    updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow, nullable=False)
 
     user = relationship("User", back_populates="configurations")
 
@@ -40,8 +43,9 @@ class VerificationCode(Base):
 
     email = Column(String, primary_key=True, index=True, nullable=False)
     code = Column(String, nullable=False)
-    password = Column(String, nullable=False)  # Хранение пароля до подтверждения регистрации
-    expires_at = Column(DateTime, nullable=False, default=datetime.utcnow)
+    password = Column(String, nullable=False)
+    expires_at = Column(DateTime, nullable=False, default=lambda: datetime.utcnow() + timedelta(minutes=10))
+
 
 class ServiceTemplate(Base):
     __tablename__ = "service_templates"
@@ -51,4 +55,17 @@ class ServiceTemplate(Base):
     description = Column(Text, nullable=True)
     file_extension = Column(String, nullable=True)
     template_filename = Column(String, nullable=False)
-    icon = Column(Text, nullable=True)  # Для хранения Base64-строки иконки
+    icon = Column(Text, nullable=True)
+
+
+class PaymentOrder(Base):
+    __tablename__ = "payment_orders"
+
+    order_id = Column(String, primary_key=True, index=True)
+    user_id = Column(Integer, ForeignKey("users.id"), nullable=False)
+    plan = Column(String, nullable=False)
+    amount = Column(String, nullable=False)
+    status = Column(String, default="created", nullable=False)
+    created_at = Column(DateTime, default=datetime.utcnow, nullable=False)
+
+    user = relationship("User", back_populates="payment_orders")

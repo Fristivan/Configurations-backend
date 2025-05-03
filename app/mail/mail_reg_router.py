@@ -36,7 +36,7 @@ def request_verification_code(user: UserRegister, db: Session = Depends(get_db))
 
     send_email(
         receiver_email=user.email,
-        subject="Подтверждение регистрации",
+        subject=f"Ваш код: {code} | Подтверждение регистрации",
         template_name="email_verification_template.html",
         context={"code": code}
     )

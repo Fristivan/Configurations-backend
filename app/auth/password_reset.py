@@ -8,7 +8,7 @@ import random
 from app.auth.auth_service import get_db, pwd_context
 from app.database.crud import get_user_by_email
 from app.database.models import VerificationCode, User
-from app.auth.mail_service import send_verification_email
+from app.mail.mail_service import send_email
 
 password_reset_router = APIRouter()
 
@@ -19,7 +19,6 @@ class PasswordResetConfirm(BaseModel):
     email: EmailStr
     code: str
     new_password: str = Field(..., min_length=8)
-    confirm_password: str = Field(..., min_length=8)
 
 
 @password_reset_router.post("/password/reset/request")
@@ -44,16 +43,13 @@ def request_password_reset(data: PasswordResetRequest, db: Session = Depends(get
     db.add(verification_entry)
     db.commit()
 
-    send_verification_email(data.email, code)
+    send_email(receiver_email=data.email, subject=f'Ваш код - {code} | Восстановление пароля от аккаунта ConfiGen', template_name='reset_password.html', context={"reset_code": code})
 
     return {"message": "Password reset code sent to email"}
 
 
 @password_reset_router.post("/password/reset/confirm")
 def confirm_password_reset(data: PasswordResetConfirm, db: Session = Depends(get_db)):
-    if data.new_password != data.confirm_password:
-        raise HTTPException(status_code=400, detail="Passwords do not match")
-
     verification_entry = db.query(VerificationCode).filter(
         VerificationCode.email == data.email,
         VerificationCode.code == data.code,
