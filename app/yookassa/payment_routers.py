@@ -26,7 +26,7 @@ class PaymentOrderResponse(BaseModel):
     class Config:
         orm_mode = True
 
-@router.post("/create")
+@router.post("/create/")
 def create_payment(
     req: PayRequest,
     db: Session = Depends(get_db),
@@ -51,7 +51,7 @@ def create_payment(
     return {"payment_url": res["payment_url"]}
 
 
-@router.get("/{order_id}/status")
+@router.get("/{order_id}/status/")
 def get_status(
     order_id: str,
     db: Session = Depends(get_db),
@@ -67,7 +67,7 @@ def get_status(
     return {"payment_status": info["payment_status"]}
 
 
-@router.post("/webhook")
+@router.post("/webhook/")
 async def yookassa_webhook(request: Request, db: Session = Depends(get_db)):
     payload = await request.json()
     obj = payload.get("object", {})

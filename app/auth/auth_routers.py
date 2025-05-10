@@ -5,7 +5,7 @@ from app.auth.auth_service import login_user, get_db, get_current_user
 from app.core.security import decode_token, create_access_token, create_refresh_token
 from app.config import settings
 
-router = APIRouter()
+router = APIRouter(prefix="/auth")
 
 class UserLogin(BaseModel):
     email: str
@@ -15,11 +15,11 @@ class TokenResponse(BaseModel):
     access_token: str
     token_type: str = "bearer"
 
-@router.post("/login")
+@router.post("/login/")
 def login(user: UserLogin, response: Response, db: Session = Depends(get_db)):
     return login_user(user.email, user.password, db, response)
 
-@router.post("/refresh", response_model=TokenResponse)
+@router.post("/refresh/", response_model=TokenResponse)
 def refresh_token(request: Request, response: Response):
     refresh_token_cookie = request.cookies.get("refresh_token")
 
@@ -53,7 +53,7 @@ def refresh_token(request: Request, response: Response):
 
     return TokenResponse(access_token=new_access_token)
 
-@router.post("/logout")
+@router.post("/logout/")
 def logout(response: Response, user=Depends(get_current_user)):
     if not user:
         raise HTTPException(status_code=401, detail="Пользователь не авторизован")
@@ -63,7 +63,7 @@ def logout(response: Response, user=Depends(get_current_user)):
 
     return {"message": "Вы успешно вышли из системы"}
 
-@router.get("/verify")
+@router.get("/verify/")
 def verify_auth(user=Depends(get_current_user)):
     if not user:
         raise HTTPException(status_code=401, detail="Authentication required")

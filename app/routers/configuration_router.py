@@ -51,7 +51,7 @@ def read_config(
         raise HTTPException(status_code=404, detail="Configuration not found")
     return config
 
-@router.put("/{config_id}", response_model=Configuration)
+@router.put("/{config_id}/", response_model=Configuration)
 def update_config(
     config_id: int,
     config_update: ConfigurationUpdate,
@@ -63,7 +63,7 @@ def update_config(
         raise HTTPException(status_code=404, detail="Configuration not found")
     return config
 
-@router.delete("/{config_id}", response_model=Configuration)
+@router.delete("/{config_id}/", response_model=Configuration)
 def delete_config(
     config_id: int,
     db: Session = Depends(get_db),

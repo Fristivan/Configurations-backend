@@ -18,21 +18,21 @@ def create_template(template: ServiceTemplateCreate, db: Session = Depends(get_d
 def list_templates(db: Session = Depends(get_db)):
     return get_all_service_templates(db)
 
-@router.get("/{template_id}", response_model=ServiceTemplateResponse)
+@router.get("/{template_id}/", response_model=ServiceTemplateResponse)
 def get_template(template_id: int, db: Session = Depends(get_db)):
     template = get_service_template_by_id(db, template_id)
     if not template:
         raise HTTPException(status_code=404, detail="Template not found")
     return template
 
-@router.put("/{template_id}", response_model=ServiceTemplateResponse)
+@router.put("/{template_id}/", response_model=ServiceTemplateResponse)
 def update_template(template_id: int, template_update: ServiceTemplateUpdate, db: Session = Depends(get_db)):
     updated_template = update_service_template(db, template_id, template_update)
     if not updated_template:
         raise HTTPException(status_code=404, detail="Template not found")
     return updated_template
 
-@router.delete("/{template_id}")
+@router.delete("/{template_id}/")
 def delete_template(template_id: int, db: Session = Depends(get_db)):
     deleted_template = delete_service_template(db, template_id)
     if not deleted_template:
@@ -40,7 +40,7 @@ def delete_template(template_id: int, db: Session = Depends(get_db)):
     return {"detail": "Template deleted"}
 
 
-@router.post("/{template_id}/icon", response_model=ServiceTemplateResponse)
+@router.post("/{template_id}/icon/", response_model=ServiceTemplateResponse)
 async def upload_template_icon(
         template_id: int,
         icon: UploadFile = File(...),

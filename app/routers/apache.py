@@ -9,7 +9,7 @@ from app.models.apache_model import ApacheConfig
 
 router = APIRouter()
 
-@router.get("/form-metadata/apache")
+@router.get("/form-metadata/apache/")
 def get_apache_form_metadata():
     schema = ApacheConfig.schema()
     fields = []

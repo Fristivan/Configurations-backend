@@ -8,7 +8,7 @@ from app.auth.auth_service import get_current_user, check_user_limit, increment_
 from app.database.database import SessionLocal
 
 router = APIRouter()
-@router.get("/form-metadata/sshd")
+@router.get("/form-metadata/sshd/")
 def get_ssh_form_metadata():
     schema = SSHConfig.schema()
     fields = []
@@ -80,7 +80,7 @@ def get_ssh_form_metadata():
 
     return {"fields": fields, "dependencies": dependencies}
 
-@router.post("/generate/sshd")
+@router.post("/generate/sshd/")
 def generate_ssh(config: SSHConfig, db: Session = Depends(get_db), user=Depends(get_current_user)):
     if not user:
         raise HTTPException(status_code=401, detail="Authentication required")

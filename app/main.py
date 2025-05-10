@@ -14,16 +14,20 @@ from app.user.user_router import router as user_router
 from app.routers.configuration_router import router as configuration_router
 from app.routers.service_template_router import router as service_template_router
 
-from fastapi import FastAPI, Depends
+from fastapi import FastAPI, Depends, Request
 
-app = FastAPI()
+app = FastAPI(
+    docs_url="/api/docs",  # Настроим docs на /api/docs
+    openapi_url="/api/openapi.json"  # Настроим openapi.json на /api/openapi.json
+)
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:3000"],  # Список разрешенных источников
-    allow_credentials=True,
-    allow_methods=["*"],
+    allow_origins=["https://configen.frist-it.online"],
+    allow_methods=["*"],  # Разрешить все методы, включая OPTIONS
     allow_headers=["*"],
+    allow_credentials=True,
+    expose_headers=["*"]
 )
 
 @app.on_event("startup")
@@ -31,21 +35,21 @@ async def startup_event():
     init_db()  # Запускаем создание таблиц
 
 # Подключение маршрутов
-app.include_router(nginx.router, tags=["Config Generator"])
-app.include_router(dockerfile.router, tags=["Config Generator"])
-app.include_router(docker_compose.router, tags=["Config Generator"])
-app.include_router(systemd.router, tags=["Config Generator"])
-app.include_router(apache.router, tags=["Config Generator"])
-app.include_router(postgresql.router, tags=["Config Generator"])
-app.include_router(sshd.router, tags=["Config Generator"])
-app.include_router(redis.router, tags=["Config Generator"])
-app.include_router(auth_router, prefix="/auth", tags=["Auth"])
-app.include_router(mail_router, tags=["Auth"])
-app.include_router(password_reset_router, tags=["Auth"])
-app.include_router(user_router, tags=["User"])
-app.include_router(configuration_router, tags=["Save configurations"])
-app.include_router(service_template_router, tags=["Info about configurations"])
-app.include_router(payment_router, tags=["Payment"])
+app.include_router(nginx.router, tags=["Config Generator"], prefix="/api")
+app.include_router(dockerfile.router, tags=["Config Generator"], prefix="/api")
+app.include_router(docker_compose.router, tags=["Config Generator"], prefix="/api")
+app.include_router(systemd.router, tags=["Config Generator"], prefix="/api")
+app.include_router(apache.router, tags=["Config Generator"], prefix="/api")
+app.include_router(postgresql.router, tags=["Config Generator"], prefix="/api")
+app.include_router(sshd.router, tags=["Config Generator"], prefix="/api")
+app.include_router(redis.router, tags=["Config Generator"], prefix="/api")
+app.include_router(auth_router, tags=["Auth"], prefix="/api")
+app.include_router(mail_router, tags=["Auth"], prefix="/api")
+app.include_router(password_reset_router, tags=["Auth"], prefix="/api")
+app.include_router(user_router, tags=["User"], prefix="/api")
+app.include_router(configuration_router, tags=["Save configurations"], prefix="/api")
+app.include_router(service_template_router, tags=["Info about configurations"], prefix="/api")
+app.include_router(payment_router, tags=["Payment"], prefix="/api")
 # Директория, где находятся сервисы
 SERVICES_DIR = "app/routers"
 
@@ -64,5 +68,10 @@ def get_services(db: Session = Depends(get_db)):
     ]
 
 if __name__ == '__main__':
-    uvicorn.run("app.main:app", reload=True)
+    uvicorn.run(
+    "app.main:app",
+    host="0.0.0.0",
+    port=8000,          # Можно указать свой порт
+    reload=True
+)
 
