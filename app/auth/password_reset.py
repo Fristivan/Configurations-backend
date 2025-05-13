@@ -21,7 +21,7 @@ class PasswordResetConfirm(BaseModel):
     new_password: str = Field(..., min_length=8)
 
 
-@password_reset_router.post("/password/reset/request/")
+@password_reset_router.post("/password/reset/request")
 def request_password_reset(data: PasswordResetRequest, db: Session = Depends(get_db)):
     user = get_user_by_email(db, data.email)
     if not user:
@@ -48,7 +48,7 @@ def request_password_reset(data: PasswordResetRequest, db: Session = Depends(get
     return {"message": "Password reset code sent to email"}
 
 
-@password_reset_router.post("/password/reset/confirm/")
+@password_reset_router.post("/password/reset/confirm")
 def confirm_password_reset(data: PasswordResetConfirm, db: Session = Depends(get_db)):
     verification_entry = db.query(VerificationCode).filter(
         VerificationCode.email == data.email,

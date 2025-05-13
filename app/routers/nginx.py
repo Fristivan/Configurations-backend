@@ -12,7 +12,7 @@ from app.database.models import User
 router = APIRouter()
 
 
-@router.get("/form-metadata/nginx/")
+@router.get("/form-metadata/nginx")
 def get_nginx_form_metadata():
     schema = NginxConfig.schema()
     fields = []
@@ -88,7 +88,7 @@ def get_nginx_form_metadata():
     return {"fields": fields, "dependencies": dependencies}
 
 
-@router.post("/generate/nginx/")
+@router.post("/generate/nginx")
 def generate_nginx(config: NginxConfig, db: Session = Depends(get_db), user=Depends(get_current_user)):
     if not user:
         raise HTTPException(status_code=401, detail="Authentication required")

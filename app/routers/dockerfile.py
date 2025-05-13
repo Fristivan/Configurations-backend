@@ -10,7 +10,7 @@ from app.models.docker_models import DockerfileConfig, DockerComposeConfig
 
 router = APIRouter()
 
-@router.get("/form-metadata/dockerfile/")
+@router.get("/form-metadata/dockerfile")
 def get_dockerfile_form_metadata():
     schema = DockerfileConfig.schema()
     fields = []
@@ -83,7 +83,7 @@ def get_dockerfile_form_metadata():
 
 
 # 📌 Генерация Dockerfile
-@router.post("/generate/dockerfile/")
+@router.post("/generate/dockerfile")
 def generate_dockerfile(config: DockerfileConfig, db: Session = Depends(get_db), user=Depends(get_current_user)):
     if not user:
         raise HTTPException(status_code=401, detail="Authentication required")

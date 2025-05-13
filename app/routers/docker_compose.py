@@ -10,7 +10,7 @@ from app.models.docker_models import DockerfileConfig, DockerComposeConfig, Serv
 
 router = APIRouter()
 
-@router.get("/form-metadata/docker-compose/")
+@router.get("/form-metadata/docker-compose")
 def get_docker_compose_form_metadata():
     schema = DockerComposeConfig.schema()
     fields = []
@@ -106,7 +106,7 @@ def get_docker_compose_form_metadata():
 
 
 # 📌 Генерация docker-compose.yml
-@router.post("/generate/docker-compose/")
+@router.post("/generate/docker-compose")
 def generate_docker_compose(config: DockerComposeConfig, db: Session = Depends(get_db), user=Depends(get_current_user)):
     if not user:
         raise HTTPException(status_code=401, detail="Authentication required")

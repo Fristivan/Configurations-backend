@@ -9,7 +9,7 @@ from app.models.redis_model import RedisConfig
 
 router = APIRouter()
 
-@router.get("/form-metadata/redis/")
+@router.get("/form-metadata/redis")
 def get_redis_form_metadata():
     schema = RedisConfig.schema()
     fields = []
@@ -82,7 +82,7 @@ def get_redis_form_metadata():
 
     return {"fields": fields, "dependencies": dependencies}
 
-@router.post("/generate/redis/")
+@router.post("/generate/redis")
 def generate_redis(config: RedisConfig, db: Session = Depends(get_db), user=Depends(get_current_user)):
     if not user:
         raise HTTPException(status_code=401, detail="Authentication required")

@@ -23,7 +23,7 @@ class VerifyCode(BaseModel):
     code: str
 
 
-@mail_router.post("/register/request-code/")
+@mail_router.post("/register/request-code")
 def request_verification_code(user: UserRegister, db: Session = Depends(get_db)):
     if get_user_by_email(db, user.email):
         raise HTTPException(status_code=400, detail="User already exists!")
@@ -44,7 +44,7 @@ def request_verification_code(user: UserRegister, db: Session = Depends(get_db))
     return {"message": "Verification code sent to email"}
 
 
-@mail_router.post("/register/verify/")
+@mail_router.post("/register/verify")
 def verify_registration(data: VerifyCode, db: Session = Depends(get_db)):
     stored_code_entry = get_verification_code(db, data.email)
     if not stored_code_entry:

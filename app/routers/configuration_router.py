@@ -19,7 +19,7 @@ router = APIRouter(
     prefix="/configurations"
 )
 
-@router.post("/", response_model=Configuration)
+@router.post("", response_model=Configuration)
 def create_config(
     config: ConfigurationCreate,
     db: Session = Depends(get_db),
@@ -32,7 +32,7 @@ def create_config(
 
     return new_config
 
-@router.get("/", response_model=List[Configuration])
+@router.get("", response_model=List[Configuration])
 def read_configs(
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user)
@@ -51,7 +51,7 @@ def read_config(
         raise HTTPException(status_code=404, detail="Configuration not found")
     return config
 
-@router.put("/{config_id}/", response_model=Configuration)
+@router.put("/{config_id}", response_model=Configuration)
 def update_config(
     config_id: int,
     config_update: ConfigurationUpdate,
@@ -63,7 +63,7 @@ def update_config(
         raise HTTPException(status_code=404, detail="Configuration not found")
     return config
 
-@router.delete("/{config_id}/", response_model=Configuration)
+@router.delete("/{config_id}", response_model=Configuration)
 def delete_config(
     config_id: int,
     db: Session = Depends(get_db),

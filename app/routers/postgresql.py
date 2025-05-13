@@ -8,7 +8,7 @@ from app.models.postgresql_model import PostgreSQLConfig
 
 router = APIRouter()
 
-@router.get("/form-metadata/postgresql/")
+@router.get("/form-metadata/postgresql")
 def get_postgresql_form_metadata():
     schema = PostgreSQLConfig.schema()
     fields = []
@@ -70,7 +70,7 @@ def get_postgresql_form_metadata():
 
     return {"fields": fields, "dependencies": dependencies}
 
-@router.post("/generate/postgresql/")
+@router.post("/generate/postgresql")
 def generate_postgresql(
     config: PostgreSQLConfig,
     db: Session = Depends(get_db),

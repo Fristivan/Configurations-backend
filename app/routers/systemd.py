@@ -9,7 +9,7 @@ from app.models.systemd_model import SystemdConfig
 
 router = APIRouter()
 
-@router.get("/form-metadata/systemd/")
+@router.get("/form-metadata/systemd")
 def get_systemd_form_metadata():
     schema = SystemdConfig.schema()
     fields = []
@@ -80,7 +80,7 @@ def get_systemd_form_metadata():
 
     return {"fields": fields, "dependencies": dependencies}
 
-@router.post("/generate/systemd/")
+@router.post("/generate/systemd")
 def generate_systemd(config: SystemdConfig, db: Session = Depends(get_db), user=Depends(get_current_user)):
     if not user:
         raise HTTPException(status_code=401, detail="Authentication required")
