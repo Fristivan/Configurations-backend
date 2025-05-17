@@ -62,16 +62,14 @@ def get_status(
     if not order:
         raise HTTPException(404, "Order not found")
 
-    # 2) запрашиваем статус у YooKassa
-    info = processor.check_payment_status(order_id)
-    return {"payment_status": info["payment_status"]}
+    return {"payment_status": order.status}
 
 
 @router.post("/webhook")
 async def yookassa_webhook(request: Request, db: Session = Depends(get_db)):
     payload = await request.json()
     obj = payload.get("object", {})
-    order_id = obj.get("description", "").split()[-1]  # если ты в description запихал order_id
+    order_id = obj.get("metadata", {}).get("order_id")
     status = obj.get("status")
 
     # 1) ищем заказ в БД
